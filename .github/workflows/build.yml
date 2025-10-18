@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
@@ -60,12 +60,20 @@ jobs:
       run: .\compile.ps1 -NoSign -Compiler gcc
       shell: pwsh
 
-    - name: Upload artifacts
+    - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ProxyBridge-Build-${{ github.sha }}
         path: output/
         retention-days: 30
+
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: ProxyBridge-Installer
+        path: output/ProxyBridge-Setup-*.exe
+        retention-days: 90
+        if-no-files-found: warn
 
     - name: List output files
       run: |
@@ -75,3 +83,4 @@ jobs:
           Write-Host "  $($_.Name) - $size MB"
         }
       shell: pwsh
+
